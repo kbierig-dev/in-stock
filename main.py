@@ -2,6 +2,7 @@ import urllib.request
 import urllib.parse
 import json
 import os
+import boto3
 
 
 def lambda_handler(event, context):
@@ -29,9 +30,19 @@ def lambda_handler(event, context):
             try:
                 resp_data = json.loads(response_text)
                 if resp_data.get("success"):
+                    body_message = f"SUCCESS! The item was added. Current cart item count: {resp_data.get('itemcount')}"
+                    
+                    try:
+                        sns = boto3.client("sns")
+                        phone_number = os.environ.get("PHONE_NUMBER")
+                        if phone_number:
+                            sns.publish(PhoneNumber=phone_number, Message=body_message)
+                    except Exception as e:
+                        print(f"Failed to send SMS: {e}")
+
                     return {
                         "statusCode": 200,
-                        "body": f"SUCCESS! The item was added. Current cart item count: {resp_data.get('itemcount')}",
+                        "body": body_message,
                     }
                 else:
                     return {
