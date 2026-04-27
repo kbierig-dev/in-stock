@@ -59,6 +59,6 @@ def lambda_handler(event, context):
         return {"statusCode": 500, "body": f"An error occurred: {str(e)}"}
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Local testing execution wrapper
     print(lambda_handler(None, None))
