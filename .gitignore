@@ -1,8 +1,7 @@
-# Environment variables (sensitive data)
-.env
-.env.*
-
-# Python bytecode/cache
+.venv/
 __pycache__/
-*.py[cod]
-*$py.class
+*.zip
+.env
+.coverage
+.pytest_cache/
+.ruff_cache/

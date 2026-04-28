@@ -1,0 +1,33 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write # Required for requesting the JWT (OIDC)
+  contents: read  # Required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Best practice: Use OIDC (keyless)
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Create Deployment Package
+        run: |
+          zip in-stock.zip main.py
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp in-stock.zip s3://example-dev-bucket-001/deployments/in-stock.zip
